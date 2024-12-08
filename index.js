@@ -4,9 +4,15 @@ const express = require("express");
 
 // configuro el servidor para usar variables de entorno:
 require("dotenv").config();
+
+// importo las rutas
+const routes = require("./src/api/routers/routes");
+
 // creo el servidor:
 const server = express();
 server.use(express.json());
+server.use('/', routes);
+
 // configuro por qué puerto se ejecuta:
 const PORT = process.env.PORT;
 server.listen(PORT, () => {
@@ -19,5 +25,4 @@ const connectDB = require("./src/utils/db_mongo");
 connectDB();
 
 // TO DO:
-// crear modelos de datos y exportimport en index
 // mirar documentación mongoose (conexión y schema)
