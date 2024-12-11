@@ -2,13 +2,13 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const eventSchema = new Schema({
-    id: {type: Number, require:true, unique:true},
-    name: {type:String, require:true},
+    id: {type: Number, required:true, unique:true},
+    name: {type:String, required:true},
     description: {type:String},
-    date: {type:Date, require:true},
-    location: {type:String, require:true},
-    sport: {type:String, require:true},
-    organizer: {type:String}
+    date: {type:Date, required:true},
+    location: {type:String, required:true},
+    sport: {type:String, required:true},
+    organizer: {type:String, required:true}
 }, {
     collection: "events",
     timestamps:true

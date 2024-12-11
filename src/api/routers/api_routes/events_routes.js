@@ -1,12 +1,26 @@
 const express = require("express");
 const eventsRouter = express.Router();
-const {viewAllEvents, getEventById, createEvent, updateEventById, deleteEventById} = require("../../controllers/events_controller");
+const {getAllEvents,
+    getEventById,
+    createEvent,
+    updateEventById,
+    deleteEventById,
+    getUpcomingEvents,
+    filterBySport,
+    getEventsByDate} = require("../../controllers/events_controller");
 const checkToken = require("../../../utils/middleware");
 
-eventsRouter.get("/", checkToken, viewAllEvents);
-eventsRouter.get("/:eventId", checkToken, getEventById);
+// RUTAS PARA GESTIÓN DE EVENTOS
+eventsRouter.get("/", getAllEvents);
+eventsRouter.get("/:eventId", getEventById);
 eventsRouter.post("/", checkToken, createEvent);
-eventsRouter.put("/:eventId", updateEventById);
-eventsRouter.delete("/:eventId", deleteEventById);
+eventsRouter.put("/:eventId", checkToken, updateEventById);
+eventsRouter.delete("/:eventId", checkToken, deleteEventById);
+
+// RUTAS PARA CONSULTA AVANZADA DE EVENTOS
+eventsRouter.get("/upcoming/get", getUpcomingEvents);
+eventsRouter.get("/filterbysport/events", filterBySport); //usando los query params "type"
+eventsRouter.get("/filterbydate/date", getEventsByDate); //usando los query params "from" y "to"
+
 
 module.exports = eventsRouter;
