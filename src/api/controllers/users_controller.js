@@ -5,59 +5,55 @@ const createToken = require("../../utils/jwt");
 
 const registerUser = async (req, res) => {
     try {
-        // recibo los datos
-        const newUser = req.body;
-        // valido si el usuario ya existe en la bdd
-        const userDB = await Users.find({username: newUser.username});
-        // si existe envío error de respuesta
+        // Se valida si el usuario solicitado ya existe en la bdd, si es así se envía mensaje de error:
+        const userDB = await Users.find({username: req.body.username});
         if (userDB.length !== 0) {
-            return res.status(400).json({message: "ya existe un usuario con ese nombre"});
+            return res.status(400).json({message: "Ya existe un usuario con ese nombre, por favor elija otro"});
         }
-        // si no existe encripto la contraseña y lo añado, devuelvo respuesta con los datos del usuario creado
-        newUser.password = await bcrypt.hash(newUser.password, 10); 
-        const registeredUser = await Users.create(newUser);
-        return res.status(201).json({message: "el usuario ha sido registrado con éxito", data: registeredUser});
+        // Si no existe se encripta la contraseña y se añade el usuario, devolviendo respuesta con los datos del usuario creado:
+        req.body.password = await bcrypt.hash(req.body.password, 10); 
+        const registeredUser = await Users.create(req.body);
+        return res.status(201).json({message: "El usuario ha sido registrado con éxito", data: registeredUser});
     } catch (error) {
-        console.log(error)
+        return res.status(500).json({message: "Se produjo un error en el servidor", data: error})
     }
 };
 
-// función para crear el token previamente creada en jwt.js
 const loginUser = async (req, res) => {
     try {
-        // recibimos los datos
+        // Se guardan los datos de la petición:
         const {username, password} = req.body;
-        // verificamos si el usuario existe en la bdd
+        // Se verifica si el usuario existe en la bdd y si no es así se devuelve el mensaje correspondiente:
         const userDB = await Users.findOne({username});
         if (!userDB){
-            return res.status(400).json({message: "el usuario no existe"})
+            return res.status(400).json({message: "El usuario introducido no existe, por favor revise los datos o proceda a registrarse"})
         }
-        // comparar la contraseña del usuario con la de la bdd encriptada
-        const checkForMatch = await bcrypt.compare(password, userDB.password); // 1er parámetro es el string que quiero comparar y el 2o es el string encriptado
-        // si no coinciden envío mensaje de error
+        // Si existe el usuario se compara la contraseña con la de la BDD encriptada:
+        const checkForMatch = await bcrypt.compare(password, userDB.password);
+        // Si no coinciden se envía mensaje de error; si hay match se crea el token y se devuelve en la respuesta:
         if (!checkForMatch){
-            return res.status(400).json({message: "contraseña incorrecta"})
+            return res.status(400).json({message: "La contraseña introducida es incorrecta"})
+        } else {
+            return res.status(200).json({
+                message: "El inicio de sesión fue realizado con éxito",
+                token: createToken(userDB)
+            })
         }
-        //si coinciden creo el token y lo devuelvo como respuesta
-        return res.status(200).json({
-            message: "Login realizado correctamente",
-            token: createToken(userDB)
-        })
     } catch (error) {
-        console.log(error)
+        return res.status(500).json({message: "Se produjo un error en el servidor", data: error})
     }
 };
 
-const viewUserProfile = async (req, res) => {
+const showUserProfile = async (req, res) => {
     try {
-        // nueva propiedad req.user -> creada en el middleware, guarda el usuario relacionado con el token
-        // busco en la bdd por el _id generado por mongo
-        const userData = await Users.findById(req.user._id);
-        // devuelvo toda la información asociada a ese _id (usuario)
-        return res.status(200).json({userData});
+        // Búsqueda del usuario en la BDD mediante el _id:
+        // (req.user es una propiedad que ha sido creada en el middleware de validación del token donde se encuentran los dato del usuario asociado a este)
+        const userProfile = await Users.findById(req.user._id);
+        // Respuesta con la información asociada a ese usuario:
+        return res.status(200).json({success: true, data: userProfile});
     } catch (error) {
-        console.log(error)
+        return res.status(500).json({message: "Se produjo un error en el servidor", data: error})
     }
 };
 
-module.exports = {registerUser, loginUser, viewUserProfile}
+module.exports = {registerUser, loginUser, showUserProfile}
