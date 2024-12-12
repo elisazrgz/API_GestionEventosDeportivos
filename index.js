@@ -16,7 +16,7 @@ server.use('/', routes);
 // Se establece por qué puerto se ejecuta:
 const PORT = process.env.PORT;
 server.listen(PORT, () => {
-    console.log(`Server is running port http://localhost:${PORT}`);
+    console.log(`Servidor corriendo por puerto http://localhost:${PORT}`);
 });
 
 // CONEXIÓN CON BDD

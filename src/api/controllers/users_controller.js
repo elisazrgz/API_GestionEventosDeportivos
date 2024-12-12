@@ -56,4 +56,7 @@ const showUserProfile = async (req, res) => {
     }
 };
 
-module.exports = {registerUser, loginUser, showUserProfile}
+module.exports = {
+    registerUser,
+    loginUser,
+    showUserProfile}

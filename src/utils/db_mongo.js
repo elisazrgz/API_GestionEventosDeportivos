@@ -6,7 +6,7 @@ const connectDB = async() => {
     try{
         const db = await mongoose.connect(process.env.DB_URL);
         const {name, host} = db.connection;
-        console.log(`Working database ${name} and server ${host}`)
+        console.log(`Ejecutando base de datos ${name} en el servidor ${host}`)
     } catch (error) {
         return res.status(500).json({message: "Se produjo un error en el servidor", data: error})
     }

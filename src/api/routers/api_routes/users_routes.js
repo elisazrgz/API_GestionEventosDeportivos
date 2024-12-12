@@ -1,6 +1,8 @@
 const express = require("express");
 const usersRouter = express.Router();
-const {registerUser, loginUser, showUserProfile} = require("../../controllers/users_controller");
+const {registerUser,
+    loginUser,
+    showUserProfile} = require("../../controllers/users_controller");
 const checkToken = require("../../../utils/middleware");
 
 // RUTAS DE AUTENTICACIÓN

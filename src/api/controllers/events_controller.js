@@ -141,5 +141,4 @@ module.exports = {
     deleteEventById,
     getUpcomingEvents,
     filterBySport,
-    getEventsByDate
-}
+    getEventsByDate}
